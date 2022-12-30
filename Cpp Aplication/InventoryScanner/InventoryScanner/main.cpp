@@ -9,6 +9,8 @@
 #include <stdio.h>
 #include <sqlite3.h>
 #include <stdlib.h>
+#include <istream>
+#include <string>
 
 using namespace std;
 
@@ -59,7 +61,7 @@ int main() {
     // Table Create Statement
 
      sql = "CREATE TABLE IF NOT EXISTS Inventory("  \
-        "ID INT PRIMARY KEY     AUTOINCREMENT," \
+        "ID INTEGER PRIMARY KEY     AUTOINCREMENT," \
         "NAME           TEXT    NOT NULL," \
         "PRICE          INT     NOT NULL," \
         "NOTES          CHAR(50)," \
@@ -67,6 +69,13 @@ int main() {
 
      rc = sqlite3_exec(db, sql, callback, 0, &zErrMsg);
 
+     if (rc != SQLITE_OK) {
+         fprintf(stderr, "SQL error: %s\n", zErrMsg);
+         sqlite3_free(zErrMsg);
+     }
+     else {
+         fprintf(stdout, "Table created successfully\n");
+     }
 
 
      // Temporary Command Line Interface
@@ -77,31 +86,31 @@ int main() {
          char ans;
          cin >> ans;
          printf("\n");
-
+         cin.ignore();
          // Obtain Product information
 
          if (ans == 'y')
          {
              printf("What is the name of the product?\n");
              string name;
-             cin >> name;
+             getline(cin,name);
 
              // TODO: Find out why it currently skips over price input and fix
 
              printf("\nWhat is the PRICE of the product?\n");
              string price;
-             cin >> price;
+             getline(cin, price);
              printf("\nAny NOTES about the product?\n");
              string notes;
-             cin >> notes;
+             getline(cin, notes);
              printf("\nWhat is the LOCATION of the product?\n");
              string location;
-             cin >> location;
+             getline(cin, location);
 
              // Input Information into an sql statement (note that this is a string and must be converted to const char* with .c_str() for sqlite3_exec later)
 
              sql2 = "INSERT INTO Inventory(NAME, PRICE, NOTES, LOCATION)" \
-                 "VALUES (" + name + ", " + price + ", " + notes + ", " + location + ");";
+                 "VALUES ('" + name + "', '" + price + "', '" + notes + "', '" + location + "');";
 
              char ans2;
 
@@ -109,13 +118,21 @@ int main() {
 
              cout << "do you wish to execute " << sql2 << "?(y/n)" << endl;
              cin >> ans2;
-             
+             cin.ignore();
              // if correct execute statement
              
              if (ans2 == 'y')
              {
-                 printf("Executing code...");
+                 printf("Executing code...\n");
                  rc = sqlite3_exec(db, sql2.c_str(), callback, 0, &zErrMsg);
+
+                 if (rc != SQLITE_OK) {
+                     fprintf(stderr, "SQL error: %s\n", zErrMsg);
+                     sqlite3_free(zErrMsg);
+                 }
+                 else {
+                     fprintf(stdout, "Records created successfully\n");
+                 }
              }
              
              // if not correct ignore and restart questioning
@@ -134,6 +151,11 @@ int main() {
          }
      }
      // TODO: Select * from database and print them out
+
+     string sql3 = "SELECT * FROM Inventory;";
+
+     rc = sqlite3_exec(db, sql3.c_str(), callback2, 0, &zErrMsg);
+
     
     // Close database 
 

@@ -1,3 +1,1 @@
-﻿  main.cpp
-C:\Users\Harve\source\repos\InventoryScanner\InventoryScanner\main.cpp(15,44): warning C4042: 'count': has bad storage class
-  InventoryScanner.vcxproj -> C:\Users\Harve\source\repos\InventoryScanner\Debug\InventoryScanner.exe
+﻿  InventoryScanner.vcxproj -> C:\Users\Harve\Documents\GitHub\InventoryScanner\Cpp Aplication\InventoryScanner\Debug\InventoryScanner.exe
